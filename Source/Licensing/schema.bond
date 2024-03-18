@@ -1,0 +1,9 @@
+namespace Verdant.Licensing
+
+
+struct SystemLicenseEntitlements
+{
+    0: blob SystemId;
+    1: string EnvironmentName;
+    2: vector<string> CountryCodes;
+}
