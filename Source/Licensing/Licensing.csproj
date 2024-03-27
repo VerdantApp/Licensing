@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <Product>Verdant Licensing</Product>
-    <Description>Verdant Licensing</Description>
-    <PackageTags>Verdant;Licensing</PackageTags>
+    <Product>VerdantApp Licensing</Product>
+    <Description>VerdantApp Licensing</Description>
+    <PackageTags>VerdantApp;Licensing</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
