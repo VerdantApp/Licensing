@@ -7,8 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RootNamespace>Verdant.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <AssemblyName>Verdant.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>VerdantApp.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>VerdantApp.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Label="Package">

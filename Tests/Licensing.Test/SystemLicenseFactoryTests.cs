@@ -1,4 +1,4 @@
-namespace Verdant.Licensing.Test;
+namespace VerdantApp.Licensing.Test;
 
 using Autofac;
 using Autofac.Extensions.DependencyInjection;

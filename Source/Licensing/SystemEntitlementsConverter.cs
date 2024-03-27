@@ -1,4 +1,4 @@
-namespace Verdant.Licensing;
+namespace VerdantApp.Licensing;
 
 using System.Globalization;
 using LanguageExt;
