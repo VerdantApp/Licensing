@@ -1,4 +1,4 @@
-namespace Verdant.Licensing.Test;
+namespace VerdantApp.Licensing.Test;
 
 using System.Globalization;
 using Autofac;
