@@ -69,9 +69,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
         {
             entitlements.Countries.ForEach(x => this.ValidateCountryCode(x, errors.Add));
 
-#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
             result.CountryCodes = [.. entitlements.Countries.Select(x => x.TwoLetterISORegionName)];
-#pragma warning restore SA1010 // Opening square brackets should be spaced correctly
         }
 
         if (errors.Count > 0)
@@ -132,7 +130,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
         }
 
         var countries = (entitlementsData.CountryCodes ?? new List<string>())
-            .Select(x => this.CreateRegion(x, errors.Add))
+            .Choose(x => this.CreateRegion(x, errors.Add))
             .ToSeq();
 
         if (errors.Count > 0)
@@ -146,18 +144,24 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
             countries);
     }
 
-    private RegionInfo CreateRegion(string? name, Action<Error> addError)
+    private Option<RegionInfo> CreateRegion(string? name, Action<Error> addError)
     {
         this.ValidateCountryCode(name, addError);
 
-        try
+        if (name is not null)
         {
-            return this.regionFactory.Create(name);
+            try
+            {
+                return this.regionFactory.Create(name);
+            }
+            catch (ArgumentException)
+            {
+                addError(Error.New(9414785, "Country Code is unknown"));
+                return None;
+            }
         }
-        catch (ArgumentException)
-        {
-            return this.regionFactory.Create("001");
-        }
+
+        return None;
     }
 
     private void ValidateCountryCode(RegionInfo? country, Action<Error> addError)
@@ -168,18 +172,25 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
         if (string.IsNullOrWhiteSpace(code))
         {
             addError(Error.New(253163448, "Country Code is missing"));
+            return;
         }
-        else if (code.Length < 2)
+
+        if (code.Length < 2)
         {
             addError(Error.New(1280422427, "Country Code is too short"));
+            return;
         }
-        else if (code.Length > 2)
+
+        if (code.Length > 2)
         {
             addError(Error.New(1165853056, "Country Code is too long"));
+            return;
         }
-        else if (!code.All(char.IsAsciiLetterUpper))
+
+        if (!code.All(char.IsAsciiLetterUpper))
         {
             addError(Error.New(1638279115, "Country Code must contain only upper case ASCII letters"));
+            return;
         }
 
         try
