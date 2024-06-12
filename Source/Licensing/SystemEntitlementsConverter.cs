@@ -129,7 +129,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
             entitlementsData.CountryCodes.ForEach(x => this.ValidateCountryCode(x, errors.Add));
         }
 
-        var countries = (entitlementsData.CountryCodes ?? new List<string>())
+        var countries = (entitlementsData.CountryCodes ?? [])
             .Choose(x => this.CreateRegion(x, errors.Add))
             .ToSeq();
 
