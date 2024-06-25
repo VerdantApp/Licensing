@@ -25,6 +25,11 @@ public static class ServiceCollectionExtensions
                 IEntitlementsConverter<SystemEntitlements, SystemLicenseEntitlements>,
                 SystemEntitlementsConverter>();
 
+        _ = services
+            .AddSingleton<
+                ILicenseDescriptor<SystemEntitlements>,
+                SystemLicenseDescriptor>();
+
         return services;
     }
 }
