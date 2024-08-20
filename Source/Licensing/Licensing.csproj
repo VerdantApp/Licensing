@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bond.CSharp" Version="11.0.1" />
-    <PackageReference Include="TIKSN-Framework" Version="5.2.2" />
+    <PackageReference Include="Bond.CSharp" />
+    <PackageReference Include="TIKSN-Framework" />
   </ItemGroup>
 
 </Project>
