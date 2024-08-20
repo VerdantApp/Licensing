@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bond.CSharp" Version="11.0.1" />
-    <PackageReference Include="TIKSN-Framework" Version="5.2.0" />
+    <PackageReference Include="TIKSN-Framework" Version="5.2.2" />
   </ItemGroup>
 
 </Project>
