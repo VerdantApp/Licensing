@@ -2,9 +2,9 @@ namespace VerdantApp.Licensing.Test;
 
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using Shouldly;
 using TIKSN.DependencyInjection;
 using TIKSN.Licensing;
 using Xunit;
@@ -42,6 +42,6 @@ public class SystemLicenseFactoryTests
 
         // Assert
 
-        _ = systemLicenseFactory.Should().NotBeNull();
+        _ = systemLicenseFactory.ShouldNotBeNull();
     }
 }

@@ -31,4 +31,9 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Bond.CSharp" />
+    <PackageReference Include="TIKSN-Framework" />
+  </ItemGroup>
+
 </Project>
