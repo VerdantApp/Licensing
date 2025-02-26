@@ -5,6 +5,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using Shouldly;
 using TIKSN.DependencyInjection;
 using TIKSN.Deployment;
 using TIKSN.Licensing;
@@ -56,11 +57,11 @@ public class SystemEntitlementsConverterTests
 
         // Assert
 
-        _ = validation.IsSuccess.Should().Be(isValid);
+        validation.IsSuccess.ShouldBe(isValid);
         _ = validation.IfSuccess(x =>
         {
-            _ = x.CountryCodes.Count.Should().Be(1);
-            _ = x.CountryCodes.Single().Should().Be(country.TwoLetterISORegionName);
+            x.CountryCodes.Count.ShouldBe(1);
+            x.CountryCodes.Single().ShouldBe(country.TwoLetterISORegionName);
         });
     }
 
@@ -76,6 +77,6 @@ public class SystemEntitlementsConverterTests
 
         // Assert
 
-        _ = systemEntitlementsConverter.Should().NotBeNull();
+        _ = systemEntitlementsConverter.ShouldNotBeNull();
     }
 }

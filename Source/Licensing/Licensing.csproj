@@ -10,9 +10,4 @@
     <PackageTags>VerdantApp;Licensing</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Bond.CSharp" />
-    <PackageReference Include="TIKSN-Framework" />
-  </ItemGroup>
-
 </Project>
