@@ -32,8 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bond.CSharp" />
+    <PackageReference Include="Grpc.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="TIKSN-Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="schema.proto" GrpcServices="None" />
   </ItemGroup>
 
 </Project>
