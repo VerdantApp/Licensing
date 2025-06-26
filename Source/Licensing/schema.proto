@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option csharp_namespace = "VerdantApp.Licensing";
+
+message SystemLicenseEntitlements {
+    bytes SystemId = 1;
+    string EnvironmentName = 2;
+    repeated string CountryCodes = 3;
+}

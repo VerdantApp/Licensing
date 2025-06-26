@@ -10,7 +10,6 @@ using TIKSN.Deployment;
 /// <param name="SystemId">System ID.</param>
 /// <param name="EnvironmentName">Deployment environment name.</param>
 /// <param name="Countries">Supported Countries.</param>
-[CLSCompliant(false)]
 public record SystemEntitlements(
     Ulid SystemId,
     EnvironmentName EnvironmentName,

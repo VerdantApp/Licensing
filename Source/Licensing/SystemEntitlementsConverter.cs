@@ -1,6 +1,7 @@
 namespace VerdantApp.Licensing;
 
 using System.Globalization;
+using Google.Protobuf;
 using LanguageExt;
 using LanguageExt.Common;
 using TIKSN.Deployment;
@@ -22,7 +23,6 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
     /// Initializes a new instance of the <see cref="SystemEntitlementsConverter"/> class.
     /// </summary>
     /// <param name="regionFactory"><see cref="RegionInfo"/> Factory.</param>
-    [CLSCompliant(false)]
     public SystemEntitlementsConverter(
         IRegionFactory regionFactory)
         => this.regionFactory = regionFactory ?? throw new ArgumentNullException(nameof(regionFactory));
@@ -32,7 +32,6 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
     /// </summary>
     /// <param name="entitlements">Domain Model.</param>
     /// <returns>Validation of Data Model.</returns>
-    [CLSCompliant(false)]
     public Validation<Error, SystemLicenseEntitlements> Convert(
         SystemEntitlements entitlements)
     {
@@ -50,7 +49,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
             errors.Add(Error.New(1366359375, "Invalid System ID"));
         }
 
-        result.SystemId = new ArraySegment<byte>(entitlements.SystemId.ToByteArray());
+        result.SystemId = ByteString.CopyFrom(entitlements.SystemId.ToByteArray());
 
         if (string.IsNullOrWhiteSpace(entitlements.EnvironmentName.ToString()))
         {
@@ -69,7 +68,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
         {
             entitlements.Countries.ForEach(x => this.ValidateCountryCode(x, errors.Add));
 
-            result.CountryCodes = [.. entitlements.Countries.Select(x => x.TwoLetterISORegionName)];
+            result.CountryCodes.AddRange(entitlements.Countries.Select(x => x.TwoLetterISORegionName));
         }
 
         if (errors.Count > 0)
@@ -85,7 +84,6 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
     /// </summary>
     /// <param name="entitlementsData">Data Model.</param>
     /// <returns>Validation of Domain Model.</returns>
-    [CLSCompliant(false)]
     public Validation<Error, SystemEntitlements> Convert(
         SystemLicenseEntitlements entitlementsData)
     {
@@ -98,7 +96,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
             return errors.ToSeq();
         }
 
-        var systemId = new Ulid(entitlementsData.SystemId);
+        var systemId = new Ulid(entitlementsData.SystemId.ToByteArray());
 
         if (InvalidSystemIds.Contains(systemId))
         {
