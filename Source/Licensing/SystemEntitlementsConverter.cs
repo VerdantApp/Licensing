@@ -17,15 +17,15 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
     private static readonly Seq<Ulid> InvalidSystemIds =
         Seq(Ulid.Empty, Ulid.MinValue, Ulid.MaxValue);
 
-    private readonly IRegionFactory regionFactory;
+    private readonly ICountryFactory countryFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SystemEntitlementsConverter"/> class.
     /// </summary>
-    /// <param name="regionFactory"><see cref="RegionInfo"/> Factory.</param>
+    /// <param name="countryFactory"><see cref="CountryInfo"/> Factory.</param>
     public SystemEntitlementsConverter(
-        IRegionFactory regionFactory)
-        => this.regionFactory = regionFactory ?? throw new ArgumentNullException(nameof(regionFactory));
+        ICountryFactory countryFactory)
+        => this.countryFactory = countryFactory ?? throw new ArgumentNullException(nameof(countryFactory));
 
     /// <summary>
     /// Convert from Domain Model to Data Model.
@@ -66,7 +66,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
         }
         else
         {
-            entitlements.Countries.ForEach(x => this.ValidateCountryCode(x, errors.Add));
+            entitlements.Countries.ForEach(x => this.ValidateCountryCode(x.TwoLetterISORegionName, errors.Add));
 
             result.CountryCodes.AddRange(entitlements.Countries.Select(x => x.TwoLetterISORegionName));
         }
@@ -128,7 +128,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
         }
 
         var countries = (entitlementsData.CountryCodes ?? [])
-            .Choose(x => this.CreateRegion(x, errors.Add))
+            .Choose(x => this.CreateCountry(x, errors.Add))
             .ToSeq();
 
         if (errors.Count > 0)
@@ -142,28 +142,17 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
             countries);
     }
 
-    private Option<RegionInfo> CreateRegion(string? name, Action<Error> addError)
+    private Option<CountryInfo> CreateCountry(string? name, Action<Error> addError)
     {
         this.ValidateCountryCode(name, addError);
 
-        if (name is not null)
+        if (name is not null && this.countryFactory.TryCreate(name, out var country))
         {
-            try
-            {
-                return this.regionFactory.Create(name);
-            }
-            catch (ArgumentException)
-            {
-                addError(Error.New(9414785, "Country Code is unknown"));
-                return None;
-            }
+            return country;
         }
 
         return None;
     }
-
-    private void ValidateCountryCode(RegionInfo? country, Action<Error> addError)
-        => this.ValidateCountryCode(country?.TwoLetterISORegionName, addError);
 
     private void ValidateCountryCode(string? code, Action<Error> addError)
     {
@@ -191,11 +180,7 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
             return;
         }
 
-        try
-        {
-            _ = this.regionFactory.Create(code);
-        }
-        catch (ArgumentException)
+        if (!this.countryFactory.TryCreate(code, out _))
         {
             addError(Error.New(111865750, "Country Code is invalid"));
         }
