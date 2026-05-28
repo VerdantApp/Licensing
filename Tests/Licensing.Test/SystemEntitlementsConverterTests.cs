@@ -3,11 +3,13 @@ namespace VerdantApp.Licensing.Test;
 using System.Globalization;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using Shouldly;
 using TIKSN.DependencyInjection;
 using TIKSN.Deployment;
+using TIKSN.Globalization;
 using TIKSN.Licensing;
 using Xunit;
 using static LanguageExt.Prelude;
@@ -34,30 +36,23 @@ public class SystemEntitlementsConverterTests
     }
 
     [Theory]
-    [InlineData("US", true)]
-    [InlineData("en-US", true)]
-    [InlineData("001", false)]
-    [InlineData("en-001", false)]
-    public void GivenCountryCode_WhenSystemEntitlementsConverted_Then(string countryCode, bool isValid)
+    [InlineData("US")]
+    [InlineData("en-US")]
+    public void GivenValidCountryCode_WhenSystemEntitlementsConverted_Then(string countryCode)
     {
-        // Arrange
-
-        var systemEntitlementsConverter = this.serviceProvider
+        var converter = this.serviceProvider
             .GetRequiredService<IEntitlementsConverter<SystemEntitlements, SystemLicenseEntitlements>>();
+        var countryFactory = this.serviceProvider.GetRequiredService<ICountryFactory>();
 
         var systemId = Ulid.NewUlid();
         var environmentName = EnvironmentName.Parse("Development", asciiOnly: true, CultureInfo.InvariantCulture).Single();
-        var country = new RegionInfo(countryCode);
+        var country = countryFactory.Create(countryCode);
         var entitlements = new SystemEntitlements(
             systemId, environmentName, Seq1(country));
 
-        // Act
+        var validation = converter.Convert(entitlements);
 
-        var validation = systemEntitlementsConverter.Convert(entitlements);
-
-        // Assert
-
-        validation.IsSuccess.ShouldBe(isValid);
+        validation.IsSuccess.ShouldBeTrue();
         _ = validation.IfSuccess(x =>
         {
             x.CountryCodes.Count.ShouldBe(1);
@@ -65,18 +60,33 @@ public class SystemEntitlementsConverterTests
         });
     }
 
+    [Theory]
+    [InlineData("001")]
+    [InlineData("en-001")]
+    public void GivenInvalidCountryCode_WhenConvertingFromDataModel_ThenValidationFails(string countryCode)
+    {
+        var converter = this.serviceProvider
+            .GetRequiredService<IEntitlementsConverter<SystemEntitlements, SystemLicenseEntitlements>>();
+
+        var systemId = Ulid.NewUlid();
+        var entitlementsData = new SystemLicenseEntitlements
+        {
+            SystemId = ByteString.CopyFrom(systemId.ToByteArray()),
+            EnvironmentName = "Development",
+        };
+        entitlementsData.CountryCodes.Add(countryCode);
+
+        var validation = converter.Convert(entitlementsData);
+
+        validation.IsSuccess.ShouldBeFalse();
+    }
+
     [Fact]
     public void GivenRegisteredServices_WhenSystemEntitlementsConverterRequested_ThenServiceShouldBeResolved()
     {
-        // Arrange
-
-        var systemEntitlementsConverter = this.serviceProvider
+        var converter = this.serviceProvider
             .GetRequiredService<IEntitlementsConverter<SystemEntitlements, SystemLicenseEntitlements>>();
 
-        // Act
-
-        // Assert
-
-        _ = systemEntitlementsConverter.ShouldNotBeNull();
+        _ = converter.ShouldNotBeNull();
     }
 }

@@ -1,8 +1,8 @@
 namespace VerdantApp.Licensing;
 
-using System.Globalization;
 using LanguageExt;
 using TIKSN.Deployment;
+using TIKSN.Globalization;
 
 /// <summary>
 /// System Entitlements.
@@ -13,4 +13,4 @@ using TIKSN.Deployment;
 public record SystemEntitlements(
     Ulid SystemId,
     EnvironmentName EnvironmentName,
-    Seq<RegionInfo> Countries);
+    Seq<CountryInfo> Countries);
