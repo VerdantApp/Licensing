@@ -56,7 +56,7 @@ public class SystemEntitlementsConverterTests
         _ = validation.IfSuccess(x =>
         {
             x.CountryCodes.Count.ShouldBe(1);
-            x.CountryCodes.Single().ShouldBe(country.TwoLetterISORegionName);
+            x.CountryCodes.Single().ShouldBe(country.PrincipalRegion.TwoLetterISORegionName);
         });
     }
 

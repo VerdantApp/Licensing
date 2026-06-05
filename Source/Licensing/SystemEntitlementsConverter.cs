@@ -66,9 +66,9 @@ public class SystemEntitlementsConverter : IEntitlementsConverter<SystemEntitlem
         }
         else
         {
-            entitlements.Countries.ForEach(x => this.ValidateCountryCode(x.TwoLetterISORegionName, errors.Add));
+            entitlements.Countries.ForEach(x => this.ValidateCountryCode(x.PrincipalRegion.TwoLetterISORegionName, errors.Add));
 
-            result.CountryCodes.AddRange(entitlements.Countries.Select(x => x.TwoLetterISORegionName));
+            result.CountryCodes.AddRange(entitlements.Countries.Select(x => x.PrincipalRegion.TwoLetterISORegionName));
         }
 
         if (errors.Count > 0)
